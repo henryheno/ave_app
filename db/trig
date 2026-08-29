@@ -1,0 +1,72 @@
+DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
+DROP FUNCTION IF EXISTS public.handle_new_user();
+
+
+
+
+DROP FUNCTION IF EXISTS public.handle_new_user() CASCADE;
+
+
+CREATE OR REPLACE FUNCTION public.handle_new_user()
+RETURNS trigger AS $$
+BEGIN
+  INSERT INTO public.utilisateurs (id, nom, email, role)
+  VALUES (
+    new.id,
+    COALESCE(new.raw_user_meta_data->>'nom', 'Utilisateur'),
+    new.email,
+    COALESCE(new.raw_user_meta_data->>'role', 'membre')
+  )
+  ON CONFLICT (id) DO UPDATE
+  SET
+    nom = COALESCE(EXCLUDED.nom, public.utilisateurs.nom),
+    email = COALESCE(EXCLUDED.email, public.utilisateurs.email),
+    role = COALESCE(EXCLUDED.role, public.utilisateurs.role);
+
+  INSERT INTO public.profiles (
+    id,
+    nom,
+    prenom,
+    sexe,
+    telephone,
+    date_naissance,
+    branche,
+    fonction,
+    comi_id,
+    avatar_url
+  )
+  VALUES (
+    new.id,
+    COALESCE(new.raw_user_meta_data->>'nom', 'Utilisateur'),
+    new.raw_user_meta_data->>'prenom',
+    new.raw_user_meta_data->>'sexe',
+    new.phone,
+    NULLIF(new.raw_user_meta_data->>'date_naissance', '')::date,
+    NULLIF(lower(new.raw_user_meta_data->>'branche'), '')::public.membre_branche,
+    new.raw_user_meta_data->>'fonction',
+    NULLIF(new.raw_user_meta_data->>'comi_id', '')::uuid,
+    new.raw_user_meta_data->>'avatar_url'
+  )
+  ON CONFLICT (id) DO NOTHING;
+
+  RETURN new;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+CREATE TRIGGER on_auth_user_created
+AFTER INSERT ON auth.users
+FOR EACH ROW
+EXECUTE FUNCTION public.handle_new_user();
+
+
+CREATE POLICY "Insert own utilisateur"
+ON public.utilisateurs FOR INSERT
+WITH CHECK (auth.uid() = id);
+
+CREATE POLICY "Update own utilisateur"
+ON public.utilisateurs FOR UPDATE
+USING (auth.uid() = id);
+
+CREATE POLICY "Select own utilisateur"
+ON public.utilisateurs FOR SELECT
+USING (auth.uid() = id);

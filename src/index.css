@@ -1,0 +1,127 @@
+@import "tailwindcss";
+
+@theme {
+  --color-theme-bg: var(--bg-primary);
+  --color-theme-surface: var(--bg-surface);
+  --color-theme-surface-hover: var(--bg-surface-hover);
+  --color-theme-border: var(--border-subtle);
+  --color-theme-text-primary: var(--text-primary);
+  --color-theme-text-secondary: var(--text-secondary);
+  --color-theme-accent-start: var(--color-primary-start);
+  --color-theme-accent-end: var(--color-primary-end);
+  
+  --color-interface-bg: var(--bg-primary);
+  --color-interface-surface: var(--bg-surface);
+  --color-interface-accent-start: var(--color-primary-start);
+  --color-interface-accent-end: var(--color-primary-end);
+  
+  --radius-interface: 2rem;
+}
+
+:root {
+  /* Mode Sombre (Défaut) */
+  --bg-primary: #09090B;
+  --bg-surface: rgba(255, 255, 255, 0.05);
+  --bg-surface-hover: rgba(255, 255, 255, 0.08);
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --text-primary: #FFFFFF;
+  --text-secondary: #A1A1AA;
+
+  /* Accent Primaire par Défaut (Jaune/Or - Branche Enfant) */
+  --color-primary-start: #EAB308;
+  --color-primary-end: #FDE047;
+  --color-primary-rgb: 234, 179, 8;
+}
+
+/* Mode Clair (appliqué sur la racine HTML) */
+:root.light {
+  --bg-primary: #F4F4F5;
+  --bg-surface: #FFFFFF;
+  --bg-surface-hover: #FAFAFA;
+  --border-subtle: #E4E4E7;
+  --text-primary: #09090B;
+  --text-secondary: #71717A;
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: 100vh;
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Utilitaires additionnels de transition */
+.transition-theme {
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease, fill 0.3s ease, stroke 0.3s ease;
+}
+
+/* Base styles for TipTap Editor & Rendered Content (Prose) */
+.prose {
+  max-width: none;
+}
+.prose ul {
+  list-style-type: disc;
+  padding-left: 1.5em;
+  margin-top: 1em;
+  margin-bottom: 1em;
+}
+.prose ol {
+  list-style-type: decimal;
+  padding-left: 1.5em;
+  margin-top: 1em;
+  margin-bottom: 1em;
+}
+.prose li {
+  margin-top: 0.25em;
+  margin-bottom: 0.25em;
+}
+.prose p {
+  margin-top: 1em;
+  margin-bottom: 1em;
+}
+.prose h1 {
+  font-size: 2em;
+  font-weight: 800;
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+}
+.prose h2 {
+  font-size: 1.5em;
+  font-weight: 700;
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+}
+.prose h3 {
+  font-size: 1.25em;
+  font-weight: 600;
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+}
+.prose blockquote {
+  border-left: 4px solid var(--border-subtle);
+  padding-left: 1em;
+  font-style: italic;
+  margin-top: 1em;
+  margin-bottom: 1em;
+}
+.prose a {
+  color: var(--color-primary-start);
+  text-decoration: underline;
+}
+.prose strong {
+  font-weight: bold;
+}
+.prose em {
+  font-style: italic;
+}
+/* Allow empty paragraphs to have height in TipTap */
+.ProseMirror p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  color: var(--text-secondary);
+  pointer-events: none;
+  height: 0;
+}
+.ProseMirror {
+  outline: none;
+}

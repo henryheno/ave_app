@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">APA APP</string>
+    <string name="title_activity_main">APA APP</string>
+    <string name="package_name">com.ave.app</string>
+    <string name="custom_url_scheme">com.ave.app</string>
+</resources>

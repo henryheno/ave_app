@@ -1,0 +1,13 @@
+alter table public.profiles
+add constraint profiles_comi_id_fkey
+foreign key (comi_id)
+references public.structures (id)
+on delete set null;
+
+
+alter table public.profiles enable row level security;
+
+create policy "Users can view all profiles"
+  on public.profiles
+  for select
+  using (auth.uid() IS NOT NULL);
